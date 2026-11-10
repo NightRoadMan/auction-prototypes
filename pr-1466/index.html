@@ -179,7 +179,7 @@
 .proto-upd{background:#ffb401!important;color:#121f48!important}
 .proto-impact{outline:2px dashed #ffb401!important;background:#fffaf0!important}
 .proto-new-col{background:#fffaf0}
-.auction-group-entities-table__table table{min-width:820px}
+.auction-group-entities-table__table table{min-width:640px}
 h3.proto-toggle__label{font-size:16px!important;font-weight:600!important;line-height:24px!important;color:#121f48}
 .proto-toggle__track{margin-top:0!important}
 .proto-toggle{align-items:center!important}
@@ -272,7 +272,7 @@ html,body{overflow-x:hidden}
       <th class="v-data-table__td v-data-table-column--align-start v-data-table__th" style="width:300px"><div class="v-data-table-header__content"><span>Клиника</span></div></th>
       <th class="v-data-table__td v-data-table-column--align-start v-data-table__th" style="width:200px"><div class="v-data-table-header__content"><span>Стоимость приёма для&nbsp;пациента</span></div></th>
       <th class="v-data-table__td v-data-table-column--align-start v-data-table__th" style="width:170px"><div class="v-data-table-header__content"><span id="th-price">Текущая цена записи</span></div></th>
-      <th class="v-data-table__td v-data-table-column--align-start v-data-table__th proto-new-col" style="width:170px"><div class="v-data-table-header__content"><span>Позиция при новой ставке<span class="proto-upd">NEW</span></span></div></th>
+      
      </tr></thead><tbody id="tbody"></tbody></table></div></div>
     </div>
    </div>
@@ -284,13 +284,7 @@ html,body{overflow-x:hidden}
  </form></div>
 </div>
 
-<div class="custom-card proto-changes"><h3>Обновлено в прототипе (табличка) <span class="proto-upd">NEW</span></h3><p class="proto-muted" style="margin:0 0 8px;font-size:13px">Дополнения прототипа сверх ТЗ из Jira, по итогам обсуждения 10.11. На странице помечены жёлтой плашкой NEW.</p><ol>
- <li>Раскрывашка переименована: «Выбрать врачей (N/M)» / «Выбрать услуги (N/M)» вместо «Редактировать ставки по каждому…».</li>
- <li>Новая колонка «Позиция при новой ставке» (только чтение): считается по топ-5 конкретного врача/услуги; до ввода ставки — прочерк.</li>
- <li>В колонке цены после ввода ставки: «600 → 1 000 ₽» у включённых строк; оранжевым с подсказкой, если ставка снизится. Исключённые строки серые, без стрелки.</li>
- <li>При включённом автообновлении: пометка «авто · до X ₽» в строках и предупреждение, если максимальной ставки не хватает для желаемой позиции у этой сущности («Макс. ставки недостаточно для №2, будет №4»).</li>
-  <li>Сводка над таблицей, видна и в свёрнутом виде: «Ставка 1 000 ₽ для 5 из 6 врачей · у 2 ставка снизится · у 1 цель автообновления недостижима».</li>
-</ol><h3 style="margin-top:16px">Что изменилось относительно прода</h3><ol>
+<div class="custom-card proto-changes"><h3>Что изменилось относительно прода</h3><ol>
  <li>Из таблицы «Редактировать ставки по каждому врачу / услуге» убрана колонка <b>«Новая ставка»</b>; поштучных ставок больше нет. Остались чекбокс «включить/исключить», Врач/Услуга, Клиника, Стоимость приёма, Текущая цена записи.</li>
  <li>Добавлен блок <b>«Автоматически обновлять ставку…»</b> — один на всё направление: одна желаемая позиция и одна максимальная ставка для всех выбранных врачей/услуг.</li>
  <li>Блок взят из точечного сценария: заголовок, описание, поля те же; радио Да/Нет (по умолчанию «Нет»), как на проде. Чекбокс «Предложение: тогл вместо Да/Нет» в жёлтой плашке сверху переключает блок на тогл для сравнения, селект позиций 1–5 с недоступными позициями и подсказкой, «Максимальная ставка, руб.» с проверкой «не меньше ставки + 1».</li>
@@ -305,7 +299,7 @@ html,body{overflow-x:hidden}
   const DATA = {
     speciality: {
       label: 'Специальность', placeholder: 'Выберите специальность', entity: 'Врач', search: 'Поиск по ФИО',
-      details: 'Выбрать врачей', countLabel: 'Выбрано врачей', of: 'врачей',
+      details: 'Редактировать ставки по каждому врачу', countLabel: 'Выбрано врачей', of: 'врачей',
       forms: ['врача', 'врачей', 'врачей'],
       groups: [
         { name: 'Терапевт', top: [1450, 1200, 980, 860, 700], items: [
@@ -322,7 +316,7 @@ html,body{overflow-x:hidden}
     },
     category: {
       label: 'Категория услуг', placeholder: 'Выберите категорию услуг', entity: 'Услуга', search: 'Поиск по названию услуги',
-      details: 'Выбрать услуги', countLabel: 'Выбрано услуг', of: 'услуг',
+      details: 'Редактировать ставки по каждой услуге', countLabel: 'Выбрано услуг', of: 'услуг',
       forms: ['услуги', 'услуг', 'услуг'],
       groups: [
         { name: 'УЗИ', top: [900, 750, 640, 520, 450], items: [
@@ -433,17 +427,17 @@ html,body{overflow-x:hidden}
         // entities
     $('entity-count').textContent = `${c.countLabel}: ${st.sel.size}/${g.items.length}`;
     $('entity-count').classList.toggle('proto-error-text', !!errs.sel);
-    $('details-label').innerHTML = `${c.details} (${st.sel.size}/${g.items.length})<span class="proto-upd">NEW</span>`;
+    $('details-label').textContent = c.details;
     const inc = g.items.filter((_, i) => st.sel.has(i));
     const lower = st.price ? inc.filter(x => st.price < x[3]).length : 0;
     const maxOk = st.au && !errors().max;
     const unreach = g.items.map((_, i) => i).filter(i => st.sel.has(i) && auIssue(i)).length;
-    $('impact').hidden = !st.price;
-    if (st.price) $('impact').innerHTML = `<span class="proto-upd">NEW</span> Ставка <b>${fmt(st.price)} ₽</b> для <b>${inc.length} из ${g.items.length}</b> ${c.of}` +
+    $('impact').hidden = true;
+    if (false) $('impact').innerHTML = `<span class="proto-upd">NEW</span> Ставка <b>${fmt(st.price)} ₽</b> для <b>${inc.length} из ${g.items.length}</b> ${c.of}` +
       (st.au ? ` · автообновление до позиции <b>№${st.pos ?? '—'}</b>${maxOk ? `, максимум <b>${fmt(+st.max)} ₽</b>` : ''}` : '') +
       (lower ? ` · <span class="proto-warn">у ${lower} ставка снизится</span>` : '')  +
       (unreach ? ` · <span class="proto-warn">у ${unreach} цель автообновления недостижима</span>` : '');
-    $('th-price').innerHTML = st.price ? 'Цена записи: сейчас → будет<span class="proto-upd">NEW</span>' : 'Текущая цена записи';
+    $('th-price').textContent = 'Текущая цена записи';
     $('entities-table').hidden = !st.open;
     $('entities-table').classList.toggle('auction-form-group__table--opened', st.open);
     $('details-chevron').classList.toggle('proto-chevron--open', st.open);
@@ -451,8 +445,8 @@ html,body{overflow-x:hidden}
     document.querySelector('th .auction-group-entities-table__name-cell').innerHTML = checkbox('data-all="1"', all, !all && !none) + ` <span id="th-entity">${c.entity}</span>`;
     const q = st.search.trim().toLowerCase();
     const rows = g.items.map((x, i) => ({ x, i })).filter(({ x }) => !q || x[0].toLowerCase().includes(q));
-    $('tbody').innerHTML = rows.length ? rows.map(({ x, i }) => `<tr class="v-data-table__tr ${st.sel.has(i) ? '' : 'proto-row-off'}"><td class="v-data-table__td v-data-table-column--align-start"><div class="auction-group-entities-table__name-cell">${checkbox(`data-row="${i}"`, st.sel.has(i))}<div class="auction-group-entities-table__name-cell-text"> ${x[0]}</div></div></td><td class="v-data-table__td v-data-table-column--align-start"><div class="collapsing-text"><div class="collapsing-text__content collapsing-text__content--default"><div>${CLINICS[x[1]]}</div></div></div></td><td class="v-data-table__td v-data-table-column--align-start">${fmt(x[2])} ₽</td><td class="v-data-table__td v-data-table-column--align-start">${priceCell(x, st.sel.has(i))}</td><td class="v-data-table__td v-data-table-column--align-start">${posCell(i, st.sel.has(i))}</td></tr>`).join('')
-      : `<tr><td colspan="5" class="v-data-table__td" style="text-align:center;color:#6c79a3">Ничего не найдено</td></tr>`;
+    $('tbody').innerHTML = rows.length ? rows.map(({ x, i }) => `<tr class="v-data-table__tr ${st.sel.has(i) ? '' : 'proto-row-off'}"><td class="v-data-table__td v-data-table-column--align-start"><div class="auction-group-entities-table__name-cell">${checkbox(`data-row="${i}"`, st.sel.has(i))}<div class="auction-group-entities-table__name-cell-text"> ${x[0]}</div></div></td><td class="v-data-table__td v-data-table-column--align-start"><div class="collapsing-text"><div class="collapsing-text__content collapsing-text__content--default"><div>${CLINICS[x[1]]}</div></div></div></td><td class="v-data-table__td v-data-table-column--align-start">${fmt(x[2])} ₽</td><td class="v-data-table__td v-data-table-column--align-start">${fmt(x[3])} ₽</td></tr>`).join('')
+      : `<tr><td colspan="4" class="v-data-table__td" style="text-align:center;color:#6c79a3">Ничего не найдено</td></tr>`;
     updateSubmit();
   }
 
