@@ -179,7 +179,7 @@
 .proto-upd{background:#ffb401!important;color:#121f48!important}
 .proto-impact{outline:2px dashed #ffb401!important;background:#fffaf0!important}
 .proto-new-col{background:#fffaf0}
-.auction-group-entities-table__table table{min-width:640px}
+.auction-group-entities-table__table table{min-width:780px}
 h3.proto-toggle__label{font-size:16px!important;font-weight:600!important;line-height:24px!important;color:#121f48}
 .proto-toggle__track{margin-top:0!important}
 .proto-toggle{align-items:center!important}
@@ -272,6 +272,7 @@ html,body{overflow-x:hidden}
       <th class="v-data-table__td v-data-table-column--align-start v-data-table__th" style="width:300px"><div class="v-data-table-header__content"><span>Клиника</span></div></th>
       <th class="v-data-table__td v-data-table-column--align-start v-data-table__th" style="width:200px"><div class="v-data-table-header__content"><span>Стоимость приёма для&nbsp;пациента</span></div></th>
       <th class="v-data-table__td v-data-table-column--align-start v-data-table__th" style="width:170px"><div class="v-data-table-header__content"><span id="th-price">Текущая цена записи</span></div></th>
+      <th class="v-data-table__td v-data-table-column--align-start v-data-table__th" style="width:170px"><div class="v-data-table-header__content"><span>Новая ставка<span class="proto-upd">NEW</span></span></div></th>
       
      </tr></thead><tbody id="tbody"></tbody></table></div></div>
     </div>
@@ -285,7 +286,7 @@ html,body{overflow-x:hidden}
 </div>
 
 <div class="custom-card proto-changes"><h3>Что изменилось относительно прода</h3><ol>
- <li>Из таблицы «Редактировать ставки по каждому врачу / услуге» убрана колонка <b>«Новая ставка»</b>; поштучных ставок больше нет. Остались чекбокс «включить/исключить», Врач/Услуга, Клиника, Стоимость приёма, Текущая цена записи.</li>
+ <li>Из таблицы «Редактировать ставки по каждому врачу / услуге» убраны поштучные инпуты ставок. Колонка <b>«Новая ставка»</b> осталась только для чтения: в ней общая ставка из поля «Новая ставка», а при включённом автообновлении диапазон «ставка – максимальная ставка» (NEW). Остались чекбокс «включить/исключить», Врач/Услуга, Клиника, Стоимость приёма, Текущая цена записи.</li>
  <li>Добавлен блок <b>«Автоматически обновлять ставку…»</b> — один на всё направление: одна желаемая позиция и одна максимальная ставка для всех выбранных врачей/услуг.</li>
  <li>Блок взят из точечного сценария: заголовок, описание, поля те же; радио Да/Нет (по умолчанию «Нет»), как на проде. Чекбокс «Предложение: тогл вместо Да/Нет» в жёлтой плашке сверху переключает блок на тогл для сравнения, селект позиций 1–5 с недоступными позициями и подсказкой, «Максимальная ставка, руб.» с проверкой «не меньше ставки + 1».</li>
  <li>Блок стоит после общего поля «Новая ставка» и появляется, как только выбрана специальность / категория, и не зависит от того, введена ли ставка. Без ставки доступны все позиции 1–5, максимальная ставка проверяется как обязательное целое число; после ввода ставки включаются ограничения точечного сценария.</li>
@@ -445,8 +446,8 @@ html,body{overflow-x:hidden}
     document.querySelector('th .auction-group-entities-table__name-cell').innerHTML = checkbox('data-all="1"', all, !all && !none) + ` <span id="th-entity">${c.entity}</span>`;
     const q = st.search.trim().toLowerCase();
     const rows = g.items.map((x, i) => ({ x, i })).filter(({ x }) => !q || x[0].toLowerCase().includes(q));
-    $('tbody').innerHTML = rows.length ? rows.map(({ x, i }) => `<tr class="v-data-table__tr ${st.sel.has(i) ? '' : 'proto-row-off'}"><td class="v-data-table__td v-data-table-column--align-start"><div class="auction-group-entities-table__name-cell">${checkbox(`data-row="${i}"`, st.sel.has(i))}<div class="auction-group-entities-table__name-cell-text"> ${x[0]}</div></div></td><td class="v-data-table__td v-data-table-column--align-start"><div class="collapsing-text"><div class="collapsing-text__content collapsing-text__content--default"><div>${CLINICS[x[1]]}</div></div></div></td><td class="v-data-table__td v-data-table-column--align-start">${fmt(x[2])} ₽</td><td class="v-data-table__td v-data-table-column--align-start">${fmt(x[3])} ₽</td></tr>`).join('')
-      : `<tr><td colspan="4" class="v-data-table__td" style="text-align:center;color:#6c79a3">Ничего не найдено</td></tr>`;
+    $('tbody').innerHTML = rows.length ? rows.map(({ x, i }) => `<tr class="v-data-table__tr ${st.sel.has(i) ? '' : 'proto-row-off'}"><td class="v-data-table__td v-data-table-column--align-start"><div class="auction-group-entities-table__name-cell">${checkbox(`data-row="${i}"`, st.sel.has(i))}<div class="auction-group-entities-table__name-cell-text"> ${x[0]}</div></div></td><td class="v-data-table__td v-data-table-column--align-start"><div class="collapsing-text"><div class="collapsing-text__content collapsing-text__content--default"><div>${CLINICS[x[1]]}</div></div></div></td><td class="v-data-table__td v-data-table-column--align-start">${fmt(x[2])} ₽</td><td class="v-data-table__td v-data-table-column--align-start">${fmt(x[3])} ₽</td><td class="v-data-table__td v-data-table-column--align-start">${newBidCell(st.sel.has(i))}</td></tr>`).join('')
+      : `<tr><td colspan="5" class="v-data-table__td" style="text-align:center;color:#6c79a3">Ничего не найдено</td></tr>`;
     updateSubmit();
   }
 
@@ -458,6 +459,12 @@ html,body{overflow-x:hidden}
     const top = entTop(i), max = +st.max;
     if (max >= top[st.pos - 1]) return null;
     return { want: st.pos, got: posAt(top, max) };
+  }
+  function newBidCell(on) {
+    if (!st.price || !on) return '<span class="proto-old">—</span>';
+    const maxOk = st.au && !errors().max && +st.max > st.price;
+    if (!maxOk) return `${fmt(st.price)} ₽`;
+    return `${fmt(st.price)} – ${fmt(+st.max)} ₽<div class="proto-old" style="font-size:12px;line-height:16px">автообновление</div>`;
   }
   function posCell(i, on) {
     if (!st.price || !on) return '<span class="proto-old">—</span>';
